@@ -1,17 +1,9 @@
 import React, { useEffect, useState } from "react";
-
-interface WaferVisualizerProps {
-  dieWidth: number;
-  dieHeight: number;
-  offsetX?: number;
-  offsetY?: number;
-  diameter?: number;
-  scribeWidth?: number;
-}
+import { WaferConfig } from "./App";
 
 type Status = 'inside' | 'edge' | 'outside';
 
-const WaferVisualizer: React.FC<WaferVisualizerProps> = ({
+const WaferVisualizer: React.FC<WaferConfig> = ({
   dieWidth,
   dieHeight,
   offsetX = 0,
@@ -19,20 +11,17 @@ const WaferVisualizer: React.FC<WaferVisualizerProps> = ({
   diameter = 300,
   scribeWidth = 0.8,
 }) => {
-  const [dies, setDies] = useState<
-    Array<{ x: number; y: number; status: Status }>
-  >([]);
-
+  const [dies, setDies] = useState<Array<{ x: number; y: number; status: Status }>>([]);
+  
   const SCALE = 1.5;
-	const radius = diameter / 2;
-	const effRadius = radius - 7.3
+  const radius = diameter / 2;
+  const effRadius = radius - 7.3;
   const scaledDiameter = diameter * SCALE;
   const scaledDieWidth = dieWidth * SCALE;
   const scaledDieHeight = dieHeight * SCALE;
-	const scaledScribeWidth = scribeWidth * SCALE;
   const scaledRadius = scaledDiameter / 2;
-	const scaledEffRadius = effRadius * SCALE;
-	
+  const scaledEffRadius = effRadius * SCALE;
+  
   const viewBoxSize = scaledDiameter + 100;
   const center = viewBoxSize / 2;
 
@@ -58,27 +47,26 @@ const WaferVisualizer: React.FC<WaferVisualizerProps> = ({
             return dist <= effRadius;
           }).length;
 
-					let status: 'inside' | 'edge' | 'outside' = 'outside';
-					if (cornersInside === 4) {
-						status = 'inside'; 
-					} else if (cornersInside > 0) {
-						status = 'edge';
-					}
+          let status: Status = 'outside';
+          if (cornersInside === 4) {
+            status = 'inside';
+          } else if (cornersInside > 0) {
+            status = 'edge';
+          }
 
-					if (status != 'outside') {
-						newDies.push({ x: x, y: y, status });
-					}
+          if (status !== 'outside') {
+            newDies.push({ x, y, status });
+          }
         }
       }
       setDies(newDies);
     };
 
-		calculateDies();
-
+    calculateDies();
   }, [dieWidth, dieHeight, offsetX, offsetY, diameter, scribeWidth]);
 
-	const getDieColor = (status: Status) => {
-		switch (status) {
+  const getDieColor = (status: Status) => {
+    switch (status) {
       case 'inside':
         return '#008000';
       case 'edge':
@@ -86,17 +74,17 @@ const WaferVisualizer: React.FC<WaferVisualizerProps> = ({
       default:
         return '#FFFFFF';
     }
-	}
+  };
 
   return (
     <div>
-			<h1 className="text-center text-2xl font-mono font-semibold">Wafer Visualizer</h1>
+      <h1 className="text-center text-2xl font-mono font-semibold">Wafer Visualizer</h1>
       <div className="w-full max-w-4xl mx-auto items-center p-2 bg-stone-500 shadow-md">
         <svg
           viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
           className="w-full border border-gray-300 bg-white"
         >
-					{dies.map(({ x, y, status }) => (
+          {dies.map(({ x, y, status }) => (
             <g key={`${x}-${y}`} transform={`translate(${center}, ${center})`}>
               <rect
                 x={(x * (scaledDieWidth + scribeWidth * SCALE)) - (scaledDieWidth / 2) - (offsetX * SCALE)}
@@ -121,33 +109,33 @@ const WaferVisualizer: React.FC<WaferVisualizerProps> = ({
               )}
             </g>
           ))}
-					<circle
-					  cx={center}
-						cy={center}
-						r={scaledRadius}
-						fill="none"
-						stroke="#666"
-						strokeWidth={2}
-					/>
-					<circle
-					  cx={center}
-						cy={center}
-						r={scaledEffRadius}
-						fill="none"
-						stroke="#555"
-						strokeWidth={1}
-					/>
-					<g stroke="#f00" strokeWidth="1">
-						<line x1={center-10} y1={center} x2={center+10} y2={center} />
-						<line x1={center} y1={center-10} x2={center} y2={center+10} />
-					</g>
-				</svg>
-				<div className="mt-4 text-sm text-black font-mono">
-					<p>Wafer diameter: {diameter}mm</p>
-					<p>Die size: {dieWidth}mm × {dieHeight}mm</p>
-					<p>Scribe width: {scribeWidth}mm</p>
-					<p>Offset: ({offsetX}mm, {offsetY}mm)</p>
-				</div>
+          <circle
+            cx={center}
+            cy={center}
+            r={scaledRadius}
+            fill="none"
+            stroke="#666"
+            strokeWidth={2}
+          />
+          <circle
+            cx={center}
+            cy={center}
+            r={scaledEffRadius}
+            fill="none"
+            stroke="#555"
+            strokeWidth={1}
+          />
+          <g stroke="#f00" strokeWidth="1">
+            <line x1={center-10} y1={center} x2={center+10} y2={center} />
+            <line x1={center} y1={center-10} x2={center} y2={center+10} />
+          </g>
+        </svg>
+        <div className="mt-4 text-sm text-black font-mono">
+          <p>Wafer diameter: {diameter}mm</p>
+          <p>Die size: {dieWidth}mm × {dieHeight}mm</p>
+          <p>Scribe width: {scribeWidth}mm</p>
+          <p>Offset: ({offsetX}mm, {offsetY}mm)</p>
+        </div>
       </div>
     </div>
   );
