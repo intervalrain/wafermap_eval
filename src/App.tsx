@@ -22,24 +22,26 @@ function App() {
     xminCount: 6,
     xmaxCount: 11,
     yminCount: 4,
-    ymaxCount: 5
+    ymaxCount: 5,
   });
-  
-  const [calculatedParams, setCalculatedParams] = useState<DieParameters | null>(null);
+
+  const [calculatedParams, setCalculatedParams] =
+    useState<DieParameters | null>(null);
   const [waferConfig, setWaferConfig] = useState<WaferConfig>({
     dieHeight: 24,
     dieWidth: 17,
     offsetX: 0,
     offsetY: 0,
     diameter: 300,
-    scribeWidth: 0.8
-  })
+    scribeWidth: 0.8,
+  });
+  const [waferConfigSetting, setWaferConfigSetting] = useState<WaferConfig>(waferConfig);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setBoundaryInfo(prev => ({
+    setBoundaryInfo((prev) => ({
       ...prev,
-      [name]: parseFloat(value) || 0
+      [name]: parseFloat(value) || 0,
     }));
   };
 
@@ -49,15 +51,78 @@ function App() {
     setWaferConfig(params);
   };
 
+  const handleWaferConfigInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setWaferConfigSetting((prev) => ({
+      ...prev,
+      [name]: parseFloat(value) || 0,
+    }));
+  };
+
+  const handleSummit = () => {
+    setWaferConfig(waferConfigSetting);
+  }
+
   return (
     <div>
-      <WaferVisualizer 
-        dieHeight={waferConfig.dieHeight} 
-        dieWidth={waferConfig.dieWidth} 
-        offsetX={waferConfig.offsetX} 
+      <WaferVisualizer
+        dieHeight={waferConfig.dieHeight}
+        dieWidth={waferConfig.dieWidth}
+        offsetX={waferConfig.offsetX}
         offsetY={waferConfig.offsetY}
         scribeWidth={waferConfig.scribeWidth}
-        diameter={waferConfig.diameter} />
+        diameter={waferConfig.diameter}
+      />
+
+      <div className="mt-8 max-w-4xl mx-auto p-4 bg-white shadow-md rounded-lg">
+        <h2 className="text-xl font-semibold mb-4 font-mono">
+          Draw wafer with wafer configuration
+        </h2>
+        <div className="grid grid-cols-2">
+          <label className="block font-mono mb-2">Die Height (mm)</label>
+          <input
+            type="number"
+            step={0.01}
+            name="dieHeight"
+            value={waferConfigSetting.dieHeight}
+            onChange={handleWaferConfigInputChange}
+            className="w-40 p-1 border rounded"
+          />
+          <label className="block font-mono mb-2">Die Width (mm)</label>
+          <input
+            type="number"
+            step={0.01}
+            name="dieWidth"
+            value={waferConfigSetting.dieWidth}
+            onChange={handleWaferConfigInputChange}
+            className="w-40 p-1 border rounded"
+          />
+          <label className="block font-mono mb-2">Offset X (mm)</label>
+          <input
+            type="number"
+            step={0.01}
+            name="offsetX"
+            value={waferConfigSetting.offsetX}
+            onChange={handleWaferConfigInputChange}
+            className="w-40 p-1 border rounded"
+          />
+          <label className="block font-mono mb-2">Offset Y (mm)</label>
+          <input
+            type="number"
+            step={0.01}
+            name="offsetY"
+            value={waferConfigSetting.offsetY}
+            onChange={handleWaferConfigInputChange}
+            className="w-40 p-1 border rounded"
+          />
+        </div>
+        <button
+          onClick={handleSummit}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 font-mono"
+        >
+          Summit
+        </button>
+      </div>
 
       <div className="mt-8 max-w-4xl mx-auto p-4 bg-white shadow-md rounded-lg">
         <h2 className="text-xl font-semibold mb-4 font-mono">

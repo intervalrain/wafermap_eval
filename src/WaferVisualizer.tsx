@@ -94,6 +94,12 @@ const WaferVisualizer: React.FC<WaferConfig> = ({
                 fill={getDieColor(status)}
                 stroke="#999"
                 strokeWidth={1}
+								onMouseEnter={(e) => {
+									(e.target as SVGRectElement).setAttribute('fill', "#00A000");
+								}}
+								onMouseLeave={(e) => {
+									(e.target as SVGRectElement).setAttribute('fill', getDieColor(status));
+								}}
               />
               {status === 'inside' && (
                 <text
@@ -135,6 +141,7 @@ const WaferVisualizer: React.FC<WaferConfig> = ({
           <p>Die size: {dieWidth}mm × {dieHeight}mm</p>
           <p>Scribe width: {scribeWidth}mm</p>
           <p>Offset: ({offsetX}mm, {offsetY}mm)</p>
+					<p>Die Count: {dies.filter(die => die.status === 'inside').length}</p>
         </div>
       </div>
     </div>
